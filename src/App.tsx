@@ -26,6 +26,7 @@ function App() {
   const [generated, setGenerated] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [activeResultPage, setActiveResultPage] = useState<ResultPageId>('score');
+  const [workspaceStep, setWorkspaceStep] = useState<'input' | 'results'>('input');
 
   const updateProduct = (field: keyof ProductForm, value: string) => {
     setProduct((current) => ({ ...current, [field]: value }));
@@ -39,6 +40,7 @@ function App() {
       setLoading(false);
       setGenerated(true);
       setActiveResultPage('score');
+      setWorkspaceStep('results');
     }, 1500);
   };
 
@@ -115,102 +117,116 @@ function App() {
                 </div>
               </header>
 
-              <div className="grid min-h-0 flex-1 gap-0 lg:grid-cols-[380px_1fr]">
-                <aside className="min-h-0 overflow-y-auto border-b border-white/8 bg-white/[0.03] p-5 lg:border-b-0 lg:border-r lg:p-6">
-                  <ProductInput
-                    product={product}
-                    loading={loading}
-                    onChange={updateProduct}
-                    onGenerate={generateReport}
-                  />
-                </aside>
+              <div className="relative min-h-0 flex-1 overflow-hidden bg-[#0c0f18] p-5 sm:p-6 lg:p-7">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:62px_62px] opacity-45" />
+                <div className="absolute left-10 top-14 h-52 w-52 rounded-full bg-cyan-300/10 blur-3xl" />
+                <div className="absolute right-20 top-16 h-60 w-60 rounded-full bg-fuchsia-300/10 blur-3xl" />
 
-                <div className="relative min-h-0 min-w-0 overflow-hidden bg-[#0c0f18] p-5 sm:p-6 lg:p-7">
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:62px_62px] opacity-45" />
-                  <div className="absolute left-10 top-14 h-52 w-52 rounded-full bg-cyan-300/10 blur-3xl" />
-                  <div className="absolute right-20 top-16 h-60 w-60 rounded-full bg-emerald-300/10 blur-3xl" />
-
-                  {loading ? (
-                    <section className="relative z-10 grid h-full min-h-[520px] place-items-center rounded-[30px] border border-white/10 bg-white/[0.05] p-8 text-center">
-                      <div>
-                        <div className="mx-auto mb-5 h-20 w-20 animate-pulse rounded-full border border-cyan-300/40 bg-cyan-300/10 shadow-glow" />
-                        <p className="mx-auto max-w-xl text-base leading-7 text-cyan-50">
-                          AI 正在分析商品卖点、平台用户行为、内容传播性与跨境转化路径...
-                        </p>
-                      </div>
-                    </section>
-                  ) : null}
-
-                  {generated ? (
-                    <div className="relative z-10 flex h-full min-h-0 flex-col gap-5">
-                      <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
-                            {activePageIndex + 1} / {resultPages.length} - Free Access
-                          </p>
-                          <h2 className="mt-2 text-3xl font-semibold text-white lg:text-5xl">Growth Play Console</h2>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={goToPreviousPage}
-                            disabled={activePageIndex === 0}
-                            className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/8 text-white transition hover:bg-white/12 disabled:opacity-35"
-                            aria-label="上一页"
-                          >
-                            <ChevronLeft className="h-5 w-5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={goToNextPage}
-                            disabled={activePageIndex === resultPages.length - 1}
-                            className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-50 disabled:opacity-35"
-                          >
-                            下一页
-                            <ArrowRight className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3 overflow-x-auto pb-2">
-                        {resultPages.map((page, index) => (
-                          <button
-                            key={page.id}
-                            type="button"
-                            onClick={() => setActiveResultPage(page.id)}
-                            className={`min-w-[138px] rounded-[22px] border p-4 text-left shadow-2xl transition hover:-translate-y-1 ${
-                              activeResultPage === page.id
-                                ? `border-white/55 bg-gradient-to-br ${page.color}`
-                                : 'border-white/10 bg-white/8'
-                            }`}
-                          >
-                            <p className="text-base font-bold text-white">{page.label}</p>
-                            <p className="mt-1 text-xs text-white/75">Page {index + 1}</p>
-                            <p className="mt-5 text-3xl font-bold text-white">{page.value}</p>
-                          </button>
+                {workspaceStep === 'input' ? (
+                  <section className="relative z-10 grid h-full min-h-0 gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+                    <div className="hidden h-full min-h-[520px] overflow-hidden rounded-[34px] border border-white/10 bg-gradient-to-br from-[#11131d] via-[#15111c] to-[#24142b] p-7 shadow-2xl lg:block">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">Product Setup</p>
+                      <h2 className="mt-4 text-5xl font-semibold leading-tight text-white">
+                        Build your
+                        <br />
+                        viral launch
+                      </h2>
+                      <p className="mt-5 max-w-md text-sm leading-7 text-slate-400">
+                        Fill in the product signal once. The AI cockpit will generate one focused report page at a time.
+                      </p>
+                      <div className="mt-12 grid grid-cols-2 gap-4">
+                        {resultPages.slice(0, 4).map((page) => (
+                          <div key={page.id} className={`rounded-[26px] bg-gradient-to-br ${page.color} p-5 shadow-xl`}>
+                            <p className="text-lg font-bold text-white">{page.label}</p>
+                            <p className="mt-8 text-3xl font-bold text-white">{page.value}</p>
+                          </div>
                         ))}
                       </div>
+                    </div>
 
-                      <div className="min-h-0 flex-1 overflow-y-auto rounded-[30px]">
-                        {renderResultPage()}
+                    <div className="h-full min-h-0 overflow-y-auto rounded-[34px] border border-white/10 bg-white/[0.04] p-4 sm:p-6">
+                      <ProductInput
+                        product={product}
+                        loading={loading}
+                        onChange={updateProduct}
+                        onGenerate={generateReport}
+                      />
+                      {loading ? (
+                        <div className="mt-4 rounded-[26px] border border-cyan-300/20 bg-cyan-300/10 p-5 text-sm leading-6 text-cyan-50">
+                          AI 正在分析商品卖点、平台用户行为、内容传播性与跨境转化路径...
+                        </div>
+                      ) : null}
+                    </div>
+                  </section>
+                ) : null}
+
+                {workspaceStep === 'results' && generated ? (
+                  <section className="relative z-10 flex h-full min-h-0 flex-col gap-5">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+                          {activePageIndex + 1} / {resultPages.length} - Free Access
+                        </p>
+                        <h2 className="mt-2 text-3xl font-semibold text-white lg:text-5xl">Growth Play Console</h2>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWorkspaceStep('input');
+                            setGenerated(false);
+                            setActiveResultPage('score');
+                          }}
+                          className="inline-flex h-11 items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 text-sm font-semibold text-white transition hover:bg-white/12"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                          返回输入
+                        </button>
+                        <button
+                          type="button"
+                          onClick={goToPreviousPage}
+                          disabled={activePageIndex === 0}
+                          className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/8 text-white transition hover:bg-white/12 disabled:opacity-35"
+                          aria-label="上一页"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={goToNextPage}
+                          disabled={activePageIndex === resultPages.length - 1}
+                          className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-50 disabled:opacity-35"
+                        >
+                          下一页
+                          <ArrowRight className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
-                  ) : null}
 
-                  {!loading && !generated ? (
-                    <section className="relative z-10 grid h-full min-h-[520px] place-items-center rounded-[30px] border border-white/10 bg-white/[0.05] p-8 text-center">
-                      <div>
-                        <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-full border border-emerald-300/30 bg-emerald-300/10 text-3xl font-semibold text-emerald-200">
-                          86
-                        </div>
-                        <h2 className="text-2xl font-semibold text-white">等待生成全球增长方案</h2>
-                        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-                          当前示例商品已填好。点击左侧按钮后，将生成评分、平台矩阵、内容打法、首发路径和实验建议。
-                        </p>
-                      </div>
-                    </section>
-                  ) : null}
-                </div>
+                    <div className="flex gap-3 overflow-x-auto pb-2">
+                      {resultPages.map((page, index) => (
+                        <button
+                          key={page.id}
+                          type="button"
+                          onClick={() => setActiveResultPage(page.id)}
+                          className={`min-w-[138px] rounded-[22px] border p-4 text-left shadow-2xl transition hover:-translate-y-1 ${
+                            activeResultPage === page.id
+                              ? `border-white/55 bg-gradient-to-br ${page.color}`
+                              : 'border-white/10 bg-white/8'
+                          }`}
+                        >
+                          <p className="text-base font-bold text-white">{page.label}</p>
+                          <p className="mt-1 text-xs text-white/75">Page {index + 1}</p>
+                          <p className="mt-5 text-3xl font-bold text-white">{page.value}</p>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="min-h-0 flex-1 overflow-y-auto rounded-[30px]">
+                      {renderResultPage()}
+                    </div>
+                  </section>
+                ) : null}
               </div>
             </div>
           </section>

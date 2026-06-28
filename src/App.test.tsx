@@ -18,6 +18,8 @@ test('generates the mocked global growth report after loading', async () => {
 
   expect(screen.getByText('Growth Workspace')).toBeInTheDocument();
   expect(screen.getByText('AI 出海增长工作台')).toBeInTheDocument();
+  expect(screen.getByText('Product Setup')).toBeInTheDocument();
+  expect(screen.queryByText('Growth Play Console')).not.toBeInTheDocument();
 
   await userEvent.click(screen.getByRole('button', { name: /生成全球增长方案/ }));
 
@@ -27,7 +29,9 @@ test('generates the mocked global growth report after loading', async () => {
     timeout: 2200,
   });
 
+  expect(screen.getByText('Growth Play Console')).toBeInTheDocument();
   expect(screen.getByText('全球爆款潜力评分')).toBeInTheDocument();
+  expect(screen.queryByText('商品输入区')).not.toBeInTheDocument();
   expect(screen.queryByText('A/B Test 实验建议')).not.toBeInTheDocument();
 
   await userEvent.click(screen.getByRole('button', { name: /下一页/ }));

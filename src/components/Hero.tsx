@@ -1,5 +1,4 @@
 import {
-  ArrowDown,
   Bell,
   Check,
   CircleDollarSign,
@@ -91,12 +90,8 @@ export function Hero({ tags, onEnterWorkspace }: HeroProps) {
                 className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-slate-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-cyan-50"
               >
                 <Sparkles className="h-4 w-4" />
-                进入增长工作台
+                进入工作台
               </button>
-              <span className="inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-white/8 px-5 text-sm font-semibold text-slate-200">
-                <ArrowDown className="h-4 w-4" />
-                点击进入应用工作台
-              </span>
             </div>
           </div>
 

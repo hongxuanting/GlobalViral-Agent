@@ -12,7 +12,9 @@ test('generates the mocked global growth report after loading', async () => {
   expect(screen.queryByText('Growth Workspace')).not.toBeInTheDocument();
   expect(screen.queryByText('AI 出海增长工作台')).not.toBeInTheDocument();
 
-  await userEvent.click(screen.getByRole('button', { name: /进入增长工作台/ }));
+  expect(screen.queryByText('点击进入应用工作台')).not.toBeInTheDocument();
+
+  await userEvent.click(screen.getByRole('button', { name: /进入工作台/ }));
 
   expect(screen.getByText('Growth Workspace')).toBeInTheDocument();
   expect(screen.getByText('AI 出海增长工作台')).toBeInTheDocument();
@@ -25,6 +27,11 @@ test('generates the mocked global growth report after loading', async () => {
     timeout: 2200,
   });
 
-  expect(screen.getAllByText('TikTok Shop').length).toBeGreaterThan(1);
-  expect(screen.getByText('A/B Test 实验建议')).toBeInTheDocument();
+  expect(screen.getByText('全球爆款潜力评分')).toBeInTheDocument();
+  expect(screen.queryByText('A/B Test 实验建议')).not.toBeInTheDocument();
+
+  await userEvent.click(screen.getByRole('button', { name: /下一页/ }));
+
+  expect(screen.getByText('平台匹配矩阵')).toBeInTheDocument();
+  expect(screen.getByText('TikTok Shop')).toBeInTheDocument();
 });

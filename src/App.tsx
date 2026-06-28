@@ -8,13 +8,24 @@ import { PlatformStrategy } from './components/PlatformStrategy';
 import { ProductInput } from './components/ProductInput';
 import { defaultProduct, mockReport, platformTags } from './data/mockReport';
 import type { ProductForm } from './types';
-import { ArrowLeft, Bell, Globe2, Search } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bell, ChevronLeft, Globe2, Search } from 'lucide-react';
+
+const resultPages = [
+  { id: 'score', label: 'Viral Score', value: '86', color: 'from-cyan-300 to-sky-500' },
+  { id: 'matrix', label: 'Platforms', value: '9', color: 'from-emerald-300 to-teal-500' },
+  { id: 'strategy', label: 'Playbooks', value: '6', color: 'from-fuchsia-300 to-rose-500' },
+  { id: 'launch', label: 'Launch Path', value: '3', color: 'from-amber-200 to-orange-500' },
+  { id: 'tests', label: 'A/B Tests', value: '7', color: 'from-violet-300 to-indigo-500' },
+] as const;
+
+type ResultPageId = (typeof resultPages)[number]['id'];
 
 function App() {
   const [product, setProduct] = useState<ProductForm>(defaultProduct);
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [activeResultPage, setActiveResultPage] = useState<ResultPageId>('score');
 
   const updateProduct = (field: keyof ProductForm, value: string) => {
     setProduct((current) => ({ ...current, [field]: value }));
@@ -27,7 +38,32 @@ function App() {
     window.setTimeout(() => {
       setLoading(false);
       setGenerated(true);
+      setActiveResultPage('score');
     }, 1500);
+  };
+
+  const activePageIndex = resultPages.findIndex((page) => page.id === activeResultPage);
+  const goToPreviousPage = () => {
+    setActiveResultPage(resultPages[Math.max(activePageIndex - 1, 0)].id);
+  };
+  const goToNextPage = () => {
+    setActiveResultPage(resultPages[Math.min(activePageIndex + 1, resultPages.length - 1)].id);
+  };
+
+  const renderResultPage = () => {
+    if (activeResultPage === 'score') {
+      return <GlobalScore report={mockReport} />;
+    }
+    if (activeResultPage === 'matrix') {
+      return <PlatformMatrix platforms={mockReport.platforms} />;
+    }
+    if (activeResultPage === 'strategy') {
+      return <PlatformStrategy strategies={mockReport.strategies} />;
+    }
+    if (activeResultPage === 'launch') {
+      return <LaunchPath phases={mockReport.launchPath} blockedPlatform={mockReport.blockedPlatform} />;
+    }
+    return <ABTestPanel tests={mockReport.abTests} />;
   };
 
   return (
@@ -38,9 +74,9 @@ function App() {
       {!workspaceOpen ? (
         <Hero tags={platformTags} onEnterWorkspace={() => setWorkspaceOpen(true)} />
       ) : (
-        <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
-          <section className="mx-auto min-h-[calc(100vh-40px)] max-w-[1380px] overflow-hidden rounded-[38px] border border-slate-900/10 bg-[#07080d] text-white shadow-[0_34px_90px_rgba(8,12,20,0.34)]">
-            <div className="flex min-h-[calc(100vh-40px)] flex-col">
+        <main className="min-h-screen overflow-hidden px-4 py-5 sm:px-6 lg:px-8">
+          <section className="mx-auto h-[calc(100vh-40px)] max-w-[1380px] overflow-hidden rounded-[38px] border border-slate-900/10 bg-[#07080d] text-white shadow-[0_34px_90px_rgba(8,12,20,0.34)]">
+            <div className="flex h-full flex-col">
               <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/8 px-5 py-4 sm:px-7">
                 <div className="flex items-center gap-3">
                   <button
@@ -79,8 +115,8 @@ function App() {
                 </div>
               </header>
 
-              <div className="grid flex-1 gap-0 lg:grid-cols-[380px_1fr]">
-                <aside className="border-b border-white/8 bg-white/[0.03] p-5 lg:border-b-0 lg:border-r lg:p-6">
+              <div className="grid min-h-0 flex-1 gap-0 lg:grid-cols-[380px_1fr]">
+                <aside className="min-h-0 overflow-y-auto border-b border-white/8 bg-white/[0.03] p-5 lg:border-b-0 lg:border-r lg:p-6">
                   <ProductInput
                     product={product}
                     loading={loading}
@@ -89,9 +125,13 @@ function App() {
                   />
                 </aside>
 
-                <div className="min-w-0 bg-[#222838] p-5 sm:p-6 lg:p-7">
+                <div className="relative min-h-0 min-w-0 overflow-hidden bg-[#0c0f18] p-5 sm:p-6 lg:p-7">
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:62px_62px] opacity-45" />
+                  <div className="absolute left-10 top-14 h-52 w-52 rounded-full bg-cyan-300/10 blur-3xl" />
+                  <div className="absolute right-20 top-16 h-60 w-60 rounded-full bg-emerald-300/10 blur-3xl" />
+
                   {loading ? (
-                    <section className="grid min-h-[620px] place-items-center rounded-[30px] border border-white/10 bg-[#2a3040] p-8 text-center">
+                    <section className="relative z-10 grid h-full min-h-[520px] place-items-center rounded-[30px] border border-white/10 bg-white/[0.05] p-8 text-center">
                       <div>
                         <div className="mx-auto mb-5 h-20 w-20 animate-pulse rounded-full border border-cyan-300/40 bg-cyan-300/10 shadow-glow" />
                         <p className="mx-auto max-w-xl text-base leading-7 text-cyan-50">
@@ -102,17 +142,63 @@ function App() {
                   ) : null}
 
                   {generated ? (
-                    <div className="grid gap-5">
-                      <GlobalScore report={mockReport} />
-                      <PlatformMatrix platforms={mockReport.platforms} />
-                      <PlatformStrategy strategies={mockReport.strategies} />
-                      <LaunchPath phases={mockReport.launchPath} blockedPlatform={mockReport.blockedPlatform} />
-                      <ABTestPanel tests={mockReport.abTests} />
+                    <div className="relative z-10 flex h-full min-h-0 flex-col gap-5">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+                            {activePageIndex + 1} / {resultPages.length} - Free Access
+                          </p>
+                          <h2 className="mt-2 text-3xl font-semibold text-white lg:text-5xl">Growth Play Console</h2>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={goToPreviousPage}
+                            disabled={activePageIndex === 0}
+                            className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/8 text-white transition hover:bg-white/12 disabled:opacity-35"
+                            aria-label="上一页"
+                          >
+                            <ChevronLeft className="h-5 w-5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={goToNextPage}
+                            disabled={activePageIndex === resultPages.length - 1}
+                            className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-50 disabled:opacity-35"
+                          >
+                            下一页
+                            <ArrowRight className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 overflow-x-auto pb-2">
+                        {resultPages.map((page, index) => (
+                          <button
+                            key={page.id}
+                            type="button"
+                            onClick={() => setActiveResultPage(page.id)}
+                            className={`min-w-[138px] rounded-[22px] border p-4 text-left shadow-2xl transition hover:-translate-y-1 ${
+                              activeResultPage === page.id
+                                ? `border-white/55 bg-gradient-to-br ${page.color}`
+                                : 'border-white/10 bg-white/8'
+                            }`}
+                          >
+                            <p className="text-base font-bold text-white">{page.label}</p>
+                            <p className="mt-1 text-xs text-white/75">Page {index + 1}</p>
+                            <p className="mt-5 text-3xl font-bold text-white">{page.value}</p>
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="min-h-0 flex-1 overflow-y-auto rounded-[30px]">
+                        {renderResultPage()}
+                      </div>
                     </div>
                   ) : null}
 
                   {!loading && !generated ? (
-                    <section className="grid min-h-[620px] place-items-center rounded-[30px] border border-white/10 bg-[#2a3040] p-8 text-center">
+                    <section className="relative z-10 grid h-full min-h-[520px] place-items-center rounded-[30px] border border-white/10 bg-white/[0.05] p-8 text-center">
                       <div>
                         <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-full border border-emerald-300/30 bg-emerald-300/10 text-3xl font-semibold text-emerald-200">
                           86

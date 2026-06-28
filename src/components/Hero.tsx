@@ -13,6 +13,7 @@ import {
 
 type HeroProps = {
   tags: string[];
+  onEnterWorkspace: () => void;
 };
 
 const launchCards = [
@@ -22,7 +23,7 @@ const launchCards = [
   { name: 'Amazon', value: '78', color: 'from-amber-200 to-orange-400', tilt: 'rotate-6' },
 ];
 
-export function Hero({ tags }: HeroProps) {
+export function Hero({ tags, onEnterWorkspace }: HeroProps) {
   return (
     <header className="px-4 pt-5 sm:px-6 lg:px-8">
       <section className="relative mx-auto max-w-[1380px] overflow-hidden rounded-[38px] border border-slate-900/10 bg-[#07080d] px-5 py-6 text-white shadow-[0_34px_90px_rgba(8,12,20,0.34)] sm:px-8 lg:px-10 lg:py-8">
@@ -84,20 +85,18 @@ export function Hero({ tags }: HeroProps) {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a
-                href="#growth-workspace"
+              <button
+                type="button"
+                onClick={onEnterWorkspace}
                 className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-slate-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-cyan-50"
               >
                 <Sparkles className="h-4 w-4" />
                 进入增长工作台
-              </a>
-              <a
-                href="#growth-workspace"
-                className="inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-white/8 px-5 text-sm font-semibold text-slate-200 transition hover:bg-white/12"
-              >
+              </button>
+              <span className="inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-white/8 px-5 text-sm font-semibold text-slate-200">
                 <ArrowDown className="h-4 w-4" />
-                向下滑动进入
-              </a>
+                点击进入应用工作台
+              </span>
             </div>
           </div>
 

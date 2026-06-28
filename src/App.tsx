@@ -6,8 +6,8 @@ import { LaunchPath } from './components/LaunchPath';
 import { PlatformMatrix } from './components/PlatformMatrix';
 import { PlatformStrategy } from './components/PlatformStrategy';
 import { ProductInput } from './components/ProductInput';
-import { defaultProduct, mockReport, platformTags } from './data/mockReport';
-import type { ProductForm } from './types';
+import { createGrowthReport, defaultProduct, platformTags } from './data/mockReport';
+import type { ProductForm, ReportData } from './types';
 import { ArrowLeft, ArrowRight, Bell, ChevronLeft, Globe2, Search } from 'lucide-react';
 
 const resultPages = [
@@ -27,6 +27,7 @@ function App() {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [activeResultPage, setActiveResultPage] = useState<ResultPageId>('score');
   const [workspaceStep, setWorkspaceStep] = useState<'input' | 'results'>('input');
+  const [report, setReport] = useState<ReportData>(() => createGrowthReport(defaultProduct));
 
   const updateProduct = (field: keyof ProductForm, value: string) => {
     setProduct((current) => ({ ...current, [field]: value }));
@@ -37,6 +38,7 @@ function App() {
     setGenerated(false);
 
     window.setTimeout(() => {
+      setReport(createGrowthReport(product));
       setLoading(false);
       setGenerated(true);
       setActiveResultPage('score');
@@ -54,18 +56,18 @@ function App() {
 
   const renderResultPage = () => {
     if (activeResultPage === 'score') {
-      return <GlobalScore report={mockReport} />;
+      return <GlobalScore report={report} />;
     }
     if (activeResultPage === 'matrix') {
-      return <PlatformMatrix platforms={mockReport.platforms} />;
+      return <PlatformMatrix platforms={report.platforms} />;
     }
     if (activeResultPage === 'strategy') {
-      return <PlatformStrategy strategies={mockReport.strategies} />;
+      return <PlatformStrategy strategies={report.strategies} />;
     }
     if (activeResultPage === 'launch') {
-      return <LaunchPath phases={mockReport.launchPath} blockedPlatform={mockReport.blockedPlatform} />;
+      return <LaunchPath phases={report.launchPath} blockedPlatform={report.blockedPlatform} />;
     }
-    return <ABTestPanel tests={mockReport.abTests} />;
+    return <ABTestPanel tests={report.abTests} />;
   };
 
   return (

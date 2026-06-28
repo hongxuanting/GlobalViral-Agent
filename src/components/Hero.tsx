@@ -1,4 +1,5 @@
 import {
+  ArrowDown,
   Bell,
   Check,
   CircleDollarSign,
@@ -80,6 +81,23 @@ export function Hero({ tags }: HeroProps) {
                   {tag}
                 </span>
               ))}
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <a
+                href="#growth-workspace"
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-slate-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-cyan-50"
+              >
+                <Sparkles className="h-4 w-4" />
+                进入增长工作台
+              </a>
+              <a
+                href="#growth-workspace"
+                className="inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-white/8 px-5 text-sm font-semibold text-slate-200 transition hover:bg-white/12"
+              >
+                <ArrowDown className="h-4 w-4" />
+                向下滑动进入
+              </a>
             </div>
           </div>
 

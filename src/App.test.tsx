@@ -9,6 +9,12 @@ test('generates the mocked global growth report after loading', async () => {
   expect(screen.getByText('Mobile Showcase')).toBeInTheDocument();
   expect(screen.getByText('AI Pilot Console')).toBeInTheDocument();
   expect(screen.getByText('Launch Cards')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /进入增长工作台/ })).toHaveAttribute(
+    'href',
+    '#growth-workspace',
+  );
+  expect(screen.getByText('Growth Workspace')).toBeInTheDocument();
+  expect(screen.getByText('AI 出海增长工作台')).toBeInTheDocument();
 
   await userEvent.click(screen.getByRole('button', { name: /生成全球增长方案/ }));
 
